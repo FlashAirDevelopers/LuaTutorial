@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>Client Flow Example</title>
+    </head>
+    <body>
+        <script>
+
+        var appId = "9999999999999999";
+
+        if(window.location.hash.length == 0) {
+            url = "https://www.facebook.com/dialog/oauth?client_id=" + 
+                     appId  + "&redirect_uri=" + window.location +
+                     "&response_type=token" +
+                     "&scope=publish_actions, user_photos";
+            window.open(url);
+
+        }
+        else {
+            accessToken = window.location.hash.substring(1);
+            graphUrl = "https://graph.facebook.com/me?" + accessToken +
+                        "&callback=displayUser"
+
+            //use JSON-P to call the graph
+            var script = document.createElement("script");
+            script.src = graphUrl;
+            document.body.appendChild(script);
+        }
+
+        function displayUser(user) {
+            var hashString = window.location.hash.substring(1);
+            var params = hashString.split("&");
+            var xhr = new XMLHttpRequest();
+            xhr.open("PUT", "http://flashair.local/lua/fb_access_token", true);
+            xhr.onload = function (e) {
+                if (xhr.readyState === 4) {
+                    userName.innerHTML = "PUT Success: " + xhr.statusText;
+                }
+                else {
+                    userName.innerHTML = "PUT Error: " + xhr.statusText;
+                }
+            };
+            xhr.onerror = function (e) {
+                userName.innerHTML = "PUT Error: " + xhr.statusText;
+            };
+
+            xhr.setRequestHeader("Overwrite", "t");
+            xhr.setRequestHeader("Content-type", "text/plain");
+            xhr.setRequestHeader("Content-length", params[0].length);
+            xhr.send(params[0]);
+        }
+        </script>
+        <p id="userName"></p>
+    </body>
+</html>
