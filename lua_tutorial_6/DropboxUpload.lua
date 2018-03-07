@@ -13,39 +13,17 @@ local app_secret	= "4k79gXxXxXxXxXx"		-- Your Dropbox app's secret
 local auth_code 	= "XrfRXkfTNcXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxX" -- authorization code!
 
 --[[
-The following function encodes data to base64, which is required to send requests
-to dropbox that use the applications key and secret (ex: getting the auth token)
---]]
-local base64_table='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-local function base64_enc(data)
-    return ((data:gsub('.', function(x)
-        local r,b='',x:byte()
-        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-        return r;
-    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-        if (#x < 6) then return '' end
-        local c=0
-        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-        return base64_table:sub(c+1,c+1)
-    end)..({ '', '==', '=' })[#data%3+1])
-end
-
---[[
 requestToken(app key, app secret, authorization code)
 requests the oath2 token, using fa.request().
 returns the token, or nil on a failure.
 --]]
 local function requestToken(key, secret, auth_code)
-	--Combine our app's key and secret'
-	appKey = key..":"..secret
-
 	--Request a token
-	message = "grant_type=authorization_code&code="..auth_code
+	message = "grant_type=authorization_code&code="..auth_code.."&client_id="..key.."&client_secret="..secret
 	b, c, h = fa.request{
-		url = "https://api.dropbox.com/1/oauth2/token",
+		url = "https://api.dropboxapi.com/oauth2/token",
 		method = "POST",
-		headers = {["Authorization"] = "Basic " .. (base64_enc(appKey)),
-		["Content-Length"] = string.len(message),
+		headers = {["Content-Length"] = string.len(message),
 		["Content-Type"] = "application/x-www-form-urlencoded"},
 		body = message
 	}
@@ -96,12 +74,15 @@ local function uploadFile(folder, file, access_token)
 
 	--Upload!
 	b, c, h = fa.request{
-		url = "https://api-content.dropbox.com/1/files_put/dropbox/"..file.."?overwrite=true",
-		method = "PUT",
+		url = "https://content.dropboxapi.com/2/files/upload",
+		method = "POST",
 		headers = {["Authorization"] = "Bearer "..access_token,
-		["Content-Length"] = filesize},
-		file=file_path,
-		bufsize=1460*10
+		["Content-Length"] = filesize,
+		["Content-Type"] = "application/octet-stream",
+		["Dropbox-API-Arg"] = '{"path":"'..file_path..'","mode":{".tag":"overwrite"}}'},
+		body = "<!--WLANSDFILE-->",
+		bufsize = 1460*10,
+		file=file_path
 	}
 
 	print(c)
@@ -123,7 +104,7 @@ if token == nil then
 	--Was it successful?
 	if token == nil then
 		print("Failed to request token, do you need to authorize?")
-		print("Auth url: https://www.dropbox.com/1/oauth2/authorize?client_id="..app_key.."&response_type=code")
+		print("Auth url: https://www.dropbox.com/oauth2/authorize?client_id="..app_key.."&response_type=code")
 	else
 		print("New token: "..token)
 		saveToken(token)
