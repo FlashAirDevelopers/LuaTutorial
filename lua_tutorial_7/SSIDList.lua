@@ -1,4 +1,13 @@
 --[[
+SSIDList.lua
+
+Copyright (c) 2019 Toshiba Memory Corporation.
+
+All sample code on this page is licensed under BSD 2-Clause License
+https://github.com/FlashAirDevelopers/LuaTutorial/blob/master/LICENSE
+]]
+
+--[[
 This script will scan for available WiFi networks,
 and output their SSIDs to a file.
 ]]--
