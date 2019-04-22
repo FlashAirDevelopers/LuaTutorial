@@ -1,3 +1,12 @@
+--[[
+FTPUpload.lua
+
+Copyright (c) 2019 Toshiba Memory Corporation.
+
+All sample code on this page is licensed under BSD 2-Clause License
+https://github.com/FlashAirDevelopers/LuaTutorial/blob/master/LICENSE
+]]
+
 local logfile   = "/FTPLog.txt"     -- Log file created in FlashAir
 local folder    = "/Upload"         -- Folder to upload file is located
 local server    = "192.168.1.1"     -- IP address of FTP server

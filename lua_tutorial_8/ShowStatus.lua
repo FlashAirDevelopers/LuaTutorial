@@ -1,3 +1,12 @@
+--[[
+ShowStatus.lua
+
+Copyright (c) 2019 Toshiba Memory Corporation.
+
+All sample code on this page is licensed under BSD 2-Clause License
+https://github.com/FlashAirDevelopers/LuaTutorial/blob/master/LICENSE
+]]
+
 --Read the FlashAir config file, store it in a table
 local function loadConfig()
 	local file = io.open("/SD_WLAN/CONFIG", "r" )

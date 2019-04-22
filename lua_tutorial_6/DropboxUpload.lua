@@ -1,4 +1,13 @@
 --[[
+DropboxUpload.lua
+
+Copyright (c) 2019 Toshiba Memory Corporation.
+
+All sample code on this page is licensed under BSD 2-Clause License
+https://github.com/FlashAirDevelopers/LuaTutorial/blob/master/LICENSE
+]]
+
+--[[
 FlashAir Lua Dropbox example.
 
 This script uploads and files in a directory to dropbox, using oauth2.
